@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GM TUSHARX VIRTUAL · File Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #090a0f;
+      --surface: #12141d;
+      --surface2: #1b1e2e;
+      --border: #2a2e45;
+      --text: #f3f4f6;
+      --text2: #9ca3af;
+      --accent: #38bdf8;
+      --accent2: #0284c7;
+      --radius: 18px;
+      --transition: 0.2s ease-in-out;
+    }
+    body.dark {
+      --bg: #090a0f;
+      --surface: #12141d;
+      --surface2: #1b1e2e;
+      --border: #2a2e45;
+      --text: #f3f4f6;
+      --text2: #9ca3af;
+      --accent: #38bdf8;
+      --accent2: #0284c7;
+    }
+    body.white {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface2: #f1f5f9;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text2: #64748b;
+      --accent: #2563eb;
+      --accent2: #1d4ed8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg) !important;
+      color: var(--text) !important;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      padding: 20px;
+      transition: 0.2s;
+    }
+    .app { max-width: 1200px; margin: 0 auto; }
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px; padding: 18px 24px;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent); }
+    .logo h1 { font-weight: 800; font-size: 1.4rem; color: var(--accent); }
+    .header-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .theme-toggle-btn, .info-btn {
+      padding: 8px 16px; border-radius: 30px; font-weight: 700; font-size: 0.8rem;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text); cursor: pointer; transition: 0.2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .theme-toggle-btn:hover, .info-btn:hover { border-color: var(--accent); }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 14px; margin: 20px 0;
+    }
+    .stat-card {
+      padding: 16px 20px; background: var(--surface2);
+      border-radius: 14px; border: 1px solid var(--border);
+    }
+    .stat-card .label { font-size: 0.7rem; text-transform: uppercase; color: var(--text2); font-weight: 700; }
+    .stat-card .value { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+    .stat-card .active-otp {
+      font-size: 1rem; font-weight: 700; color: #22c55e;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .stat-card .active-otp .otp-code {
+      background: rgba(34,197,94,0.15);
+      padding: 2px 10px; border-radius: 6px;
+      border: 1px solid rgba(34,197,94,0.3);
+      font-family: monospace;
+    }
+    .controls-panel { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .custom-select {
+      background: var(--surface2) !important;
+      border: 2px solid var(--border) !important;
+      color: var(--text) !important;
+      padding: 12px 16px; border-radius: 12px;
+      font-size: 0.95rem; font-weight: 600; width: 100%; cursor: pointer;
+      outline: none;
+    }
+    .custom-select:focus { border-color: var(--accent) !important; }
+    .btn-glow {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-weight: 700; border: none;
+      padding: 12px 22px; border-radius: 12px; cursor: pointer;
+      transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-glow:hover { opacity: 0.9; transform: translateY(-1px); }
+    .number-box {
+      padding: 28px 20px; text-align: center; margin: 20px 0;
+      background: var(--surface2); border-radius: 18px; border: 1px solid var(--border);
+    }
+    .number-box .number { font-size: 2.3rem; font-weight: 800; color: var(--accent); word-break: break-all; }
+    .number-box .flag { font-size: 2rem; margin-right: 10px; vertical-align: middle; }
+    .table-wrap {
+      max-height: 60vh; overflow-y: auto; border-radius: 14px; border: 1px solid var(--border);
+    }
+    .table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .table-wrap th {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--surface); padding: 12px 16px; text-align: left;
+      color: var(--text2); font-weight: 700; text-transform: uppercase; font-size: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-wrap td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .table-wrap tr:hover td { background: var(--surface2); }
+    .number-badge {
+      font-weight: 700; color: var(--text); background: var(--surface);
+      padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .otp-code-highlight {
+      color: #00ffcc; font-weight: 800;
+      background: rgba(0,255,204,0.1);
+      padding: 4px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,255,204,0.2);
+      font-size: 1.1rem;
+    }
+    .copy-btn {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text); cursor: pointer;
+      padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 0.8rem;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .login-btn {
+      background: #22c55e; border: none; color: #fff; cursor: pointer;
+      padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem;
+    }
+    .login-btn:hover { background: #16a34a; }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center;
+      z-index: 100; padding: 20px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; max-width: 550px; width: 100%; padding: 26px;
+    }
+  </style>
+</head>
+<body class="dark">
+<div class="app" id="mainApp">
+
+  <!-- ===== HEADER ===== -->
+  <div class="glass header">
+    <div class="logo">
+      <img src="https://i.imgpeek.com/ZCAyZIPKJzLs" alt="GM" />
+      <h1>𝐍ᴜᴍʙᴇʀ 𝐒ᴜʀᴠɪᴄᴇ 🍁</h1>
+    </div>
+    <div class="header-btns">
+      <button class="theme-toggle-btn" onclick="toggleTheme()">
+        <i data-feather="sun" class="w-4 h-4"></i> Theme
+      </button>
+      <button class="info-btn" onclick="openInfoModal()">
+        <i data-feather="life-buoy" class="w-4 h-4"></i> Support & Info
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== STATS (4 BOXES) ===== -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">📞 Total Numbers</div>
+      <div class="value" id="totalNumbers">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">🌍 Total Countries</div>
+      <div class="value" id="totalCountries">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">⏳ Pending OTPs</div>
+      <div class="value" id="pendingOtps">0</div>
+    </div>
+    <div class="stat-card" id="activeOtpBox">
+      <div class="label">🟢 Your Active OTP</div>
+      <div class="active-otp" id="activeOtpDisplay">
+        <span>No OTP sent yet</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CONTROLS ===== -->
+  <div class="glass controls-panel">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="select-group">
+        <label class="text-xs font-bold text-gray-400 uppercase">🌍 Select Country</label>
+        <select id="countrySelect" class="custom-select"><option value="auto">✨ Auto Detect</option></select>
+      </div>
+      <div class="select-group">
+        <label class="text-xs font-bold text-gray-400 uppercase">⚙️ Server Node</label>
+        <select id="serverSelect" class="custom-select">
+          <option value="all">⚡ All Servers</option>
+          <option value="Admin Stock">⭐ Admin Stock</option>
+          <option value="Konekta">Server 1 (Konekta)</option>
+          <option value="NP Node">Server 2 (NP)</option>
+          <option value="HADI Feed">Server 3 (HADI)</option>
+        </select>
+      </div>
+      <div class="flex gap-2">
+        <button id="generateBtn" class="btn-glow w-full"><i data-feather="refresh-cw" class="w-4 h-4"></i> Get Number</button>
+        <button id="refreshSmsBtn" class="btn-glow w-full"><i data-feather="rotate-cw" class="w-4 h-4"></i> OTP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== NUMBER DISPLAY ===== -->
+  <div class="number-box">
+    <div><span class="flag" id="numberFlag">🌍</span><span class="number" id="randomNumberDisplay">Loading...</span></div>
+    <div class="mt-3"><button id="copyNumberBtn" class="copy-btn hidden"><i data-feather="copy" class="w-4 h-4"></i> Copy</button></div>
+    <p id="numberSubText" class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <!-- ===== OTP TABLE ===== -->
+  <div class="glass p-5">
+    <h2 class="text-base font-bold flex items-center gap-2"><i data-feather="inbox" class="w-5 h-5 text-blue-400"></i> Live OTP Feed</h2>
+    <div id="smsStatus" class="text-center text-gray-400 py-6">Connecting...</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Time</th><th>Number</th><th>Service</th><th>Message & OTP</th><th>Action</th></tr></thead>
+        <tbody id="otpTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="text-center text-xs text-gray-400 mt-6 pt-4 border-t border-gray-800">
+    <span>Powered by <span class="font-bold text-sky-400">GM TUSHARX 🍁</span></span>
+  </footer>
+</div>
+
+<!-- ===== INFO MODAL ===== -->
+<div id="infoModal" class="modal-backdrop" onclick="closeInfoModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-blue-400">🛟 Support & Info</h3>
+      <button onclick="closeInfoModal()" class="text-gray-400 hover:text-white text-xl font-bold">✕</button>
+    </div>
+    <p class="text-xs text-gray-400 mb-4">Official Support, Channels & Terms of Service</p>
+    <div class="flex flex-col gap-3 mb-6">
+      <a href="https://wa.me/584269078224" target="_blank" class="p-3 bg-green-600 hover:bg-green-700 rounded-lg text-white font-bold text-center flex items-center justify-center gap-2">
+        <i data-feather="message-circle" class="w-4 h-4"></i> Contact via WhatsApp
+      </a>
+      <a href="https://t.me/gmtusharxfiles" target="_blank" class="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-bold text-center flex items-center justify-center gap-2">
+        <i data-feather="send" class="w-4 h-4"></i> Telegram Support & Channel
+      </a>
+    </div>
+    <div class="text-xs text-gray-500 border-t border-gray-700 pt-4 space-y-1">
+      <p><strong>📜 Terms & Policy</strong><br>This tool is for educational/testing purposes only. We do not store or misuse any data.</p>
+      <p><strong>🛡️ Privacy</strong><br>No personal data is collected or shared.</p>
+    </div>
+    <button onclick="closeInfoModal()" class="btn-glow w-full justify-center mt-5">Close</button>
+  </div>
+</div>
+
+<!-- ===== LOCK MAINTENANCE PAGE ===== -->
+<div id="maintenancePage" style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; text-align:center; padding:20px;">
+  <div style="font-size:4rem; margin-bottom:16px;">🔒</div>
+  <h1 style="font-size:2rem; font-weight:800; margin-bottom:8px;">Under Maintenance</h1>
+  <p style="color:var(--text2); max-width:400px;">The website is currently locked by the admin. Please check back later.</p>
+  <button onclick="location.reload()" style="margin-top:20px; padding:10px 30px; border-radius:30px; background:var(--accent); color:#fff; border:none; font-weight:600; cursor:pointer;">Try Again</button>
+</div>
+
+<script>
+  // ============================================================
+  //  WEB LOCK CHECK
+  // ============================================================
+  (function() {
+    const isLocked = localStorage.getItem('webLock') === 'true';
+    if (isLocked) {
+      document.getElementById('mainApp').style.display = 'none';
+      document.getElementById('maintenancePage').style.display = 'flex';
+    }
+  })();
+
+  // ============================================================
+  //  THEME TOGGLE
+  // ============================================================
+  function toggleTheme() {
+    document.body.classList.toggle('white');
+    document.body.classList.toggle('dark');
+    feather.replace();
+  }
+
+  // ============================================================
+  //  INFO MODAL
+  // ============================================================
+  function openInfoModal() { document.getElementById('infoModal').classList.add('show'); }
+  function closeInfoModal() { document.getElementById('infoModal').classList.remove('show'); }
+
+  // ============================================================
+  //  API ENDPOINTS
+  // ============================================================
+  const API_ENDPOINTS = [
+    { label: 'Konekta', numbers: 'https://hadi-sms.vercel.app/numbers', sms: 'https://hadi-sms.vercel.app/sms' },
+    { label: 'NP Node', numbers: 'https://sms-api2-virid.vercel.app/numbers', sms: 'https://sms-api2-virid.vercel.app/sms' },
+    { label: 'HADI Feed', numbers: 'https://kk-sms.vercel.app/numbers', sms: 'https://kk-sms.vercel.app/sms' }
+  ];
+
+  // ============================================================
+  //  190+ COUNTRY FLAGS
+  // ============================================================
+  const COUNTRY_FLAGS = {
+    'afghanistan':'🇦🇫','albania':'🇦🇱','algeria':'🇩🇿','andorra':'🇦🇩','angola':'🇦🇴','antigua and barbuda':'🇦🇬',
+    'argentina':'🇦🇷','armenia':'🇦🇲','australia':'🇦🇺','austria':'🇦🇹','azerbaijan':'🇦🇿','bahamas':'🇧🇸',
+    'bahrain':'🇧🇭','bangladesh':'🇧🇩','barbados':'🇧🇧','belarus':'🇧🇾','belgium':'🇧🇪','belize':'🇧🇿',
+    'benin':'🇧🇯','bhutan':'🇧🇹','bolivia':'🇧🇴','bosnia and herzegovina':'🇧🇦','botswana':'🇧🇼','brazil':'🇧🇷',
+    'brunei':'🇧🇳','bulgaria':'🇧🇬','burkina faso':'🇧🇫','burundi':'🇧🇮','cape verde':'🇨🇻','cambodia':'🇰🇭',
+    'cameroon':'🇨🇲','canada':'🇨🇦','central african republic':'🇨🇫','chad':'🇹🇩','chile':'🇨🇱','china':'🇨🇳',
+    'colombia':'🇨🇴','comoros':'🇰🇲','congo':'🇨🇬','costa rica':'🇨🇷','croatia':'🇭🇷','cuba':'🇨🇺',
+    'cyprus':'🇨🇾','czech republic':'🇨🇿','denmark':'🇩🇰','djibouti':'🇩🇯','dominica':'🇩🇲','dominican republic':'🇩🇴',
+    'east timor':'🇹🇱','ecuador':'🇪🇨','egypt':'🇪🇬','el salvador':'🇸🇻','equatorial guinea':'🇬🇶','eritrea':'🇪🇷',
+    'estonia':'🇪🇪','eswatini':'🇸🇿','ethiopia':'🇪🇹','fiji':'🇫🇯','finland':'🇫🇮','france':'🇫🇷',
+    'gabon':'🇬🇦','gambia':'🇬🇲','georgia':'🇬🇪','germany':'🇩🇪','ghana':'🇬🇭','greece':'🇬🇷',
+    'grenada':'🇬🇩','guatemala':'🇬🇹','guinea':'🇬🇳','guinea-bissau':'🇬🇼','guyana':'🇬🇾','haiti':'🇭🇹',
+    'honduras':'🇭🇳','hungary':'🇭🇺','iceland':'🇮🇸','india':'🇮🇳','indonesia':'🇮🇩','iran':'🇮🇷',
+    'iraq':'🇮🇶','ireland':'🇮🇪','israel':'🇮🇱','italy':'🇮🇹','ivory coast':'🇨🇮','jamaica':'🇯🇲',
+    'japan':'🇯🇵','jordan':'🇯🇴','kazakhstan':'🇰🇿','kenya':'🇰🇪','kiribati':'🇰🇮','north korea':'🇰🇵',
+    'south korea':'🇰🇷','kosovo':'🇽🇰','kuwait':'🇰🇼','kyrgyzstan':'🇰🇬','laos':'🇱🇦','latvia':'🇱🇻',
+    'lebanon':'🇱🇧','lesotho':'🇱🇸','liberia':'🇱🇷','libya':'🇱🇾','liechtenstein':'🇱🇮','lithuania':'🇱🇹',
+    'luxembourg':'🇱🇺','madagascar':'🇲🇬','malawi':'🇲🇼','malaysia':'🇲🇾','maldives':'🇲🇻','mali':'🇲🇱',
+    'malta':'🇲🇹','marshall islands':'🇲🇭','mauritania':'🇲🇷','mauritius':'🇲🇺','mexico':'🇲🇽','micronesia':'🇫🇲',
+    'moldova':'🇲🇩','monaco':'🇲🇨','mongolia':'🇲🇳','montenegro':'🇲🇪','morocco':'🇲🇦','mozambique':'🇲🇿',
+    'myanmar':'🇲🇲','namibia':'🇳🇦','nauru':'🇳🇷','nepal':'🇳🇵','netherlands':'🇳🇱','new zealand':'🇳🇿',
+    'nicaragua':'🇳🇮','niger':'🇳🇪','nigeria':'🇳🇬','north macedonia':'🇲🇰','norway':'🇳🇴','oman':'🇴🇲',
+    'pakistan':'🇵🇰','palau':'🇵🇼','palestine':'🇵🇸','panama':'🇵🇦','papua new guinea':'🇵🇬','paraguay':'🇵🇾',
+    'peru':'🇵🇪','philippines':'🇵🇭','poland':'🇵🇱','portugal':'🇵🇹','qatar':'🇶🇦','romania':'🇷🇴',
+    'russia':'🇷🇺','rwanda':'🇷🇼','saint kitts and nevis':'🇰🇳','saint lucia':'🇱🇨','saint vincent':'🇻🇨',
+    'samoa':'🇼🇸','san marino':'🇸🇲','sao tome and principe':'🇸🇹','saudi arabia':'🇸🇦','senegal':'🇸🇳',
+    'serbia':'🇷🇸','seychelles':'🇸🇨','sierra leone':'🇸🇱','singapore':'🇸🇬','slovakia':'🇸🇰','slovenia':'🇸🇮',
+    'solomon islands':'🇸🇧','somalia':'🇸🇴','south africa':'🇿🇦','south sudan':'🇸🇸','spain':'🇪🇸',
+    'sri lanka':'🇱🇰','sudan':'🇸🇩','suriname':'🇸🇷','sweden':'🇸🇪','switzerland':'🇨🇭','syria':'🇸🇾',
+    'taiwan':'🇹🇼','tajikistan':'🇹🇯','tanzania':'🇹🇿','thailand':'🇹🇭','togo':'🇹🇬','tonga':'🇹🇴',
+    'trinidad and tobago':'🇹🇹','tunisia':'🇹🇳','turkey':'🇹🇷','turkmenistan':'🇹🇲','tuvalu':'🇹🇻',
+    'uganda':'🇺🇬','ukraine':'🇺🇦','united arab emirates':'🇦🇪','united kingdom':'🇬🇧','united states':'🇺🇸',
+    'uruguay':'🇺🇾','uzbekistan':'🇺🇿','vanuatu':'🇻🇺','vatican city':'🇻🇦','venezuela':'🇻🇪','vietnam':'🇻🇳',
+    'yemen':'🇾🇪','zambia':'🇿🇲','zimbabwe':'🇿🇼'
+  };
+
+  // ============================================================
+  //  PENDING OTP STORE
+  // ============================================================
+  let pendingOtps = [];
+  let otpIdCounter = 0;
+  let allNumbers = [];
+  let currentNumberObj = null;
+  // Each user's Active OTP is stored in their browser's localStorage (session-based)
+  // We'll use a simple in-memory map keyed by a random user ID
+  let currentUserOtp = null; // This will be per-user because it's stored in browser memory
+
+  // ============================================================
+  //  MASK NUMBER
+  // ============================================================
+  function maskNumberSafe(raw) {
+    if (!raw) return 'N/A';
+    const clean = raw.toString().replace(/\D/g, '');
+    if (clean.length <= 4) return clean;
+    const firstTwo = clean.slice(0, 2);
+    const lastTwo = clean.slice(-2);
+    return firstTwo + 'xxxx' + lastTwo;
+  }
+
+  function getFlag(country) {
+    if (!country) return '🌍';
+    const key = country.toString().trim().toLowerCase();
+    return COUNTRY_FLAGS[key] || '🌍';
+  }
+
+  function getCountryName(raw) {
+    if (!raw) return 'Unknown';
+    const c = raw.toString().trim();
+    if (c.toLowerCase() === 'us' || c.toLowerCase() === 'usa') return 'United States';
+    if (c.toLowerCase() === 'uk') return 'United Kingdom';
+    if (c.toLowerCase() === 'uae') return 'United Arab Emirates';
+    return c.charAt(0).toUpperCase() + c.slice(1).toLowerCase();
+  }
+
+  // ============================================================
+  //  UPDATE ACTIVE OTP BOX (Per-User)
+  // ============================================================
+  function updateActiveOtpBox() {
+    const box = document.getElementById('activeOtpDisplay');
+    if (currentUserOtp) {
+      const masked = maskNumberSafe(currentUserOtp.number);
+      const flag = getFlag(currentUserOtp.country || '');
+      box.innerHTML = `
+        <span>${flag} ${masked}</span>
+        <span class="otp-code">🔑 ${currentUserOtp.otp}</span>
+        <span style="font-size:0.6rem; color:var(--text2);">${new Date(currentUserOtp.timestamp).toLocaleTimeString()}</span>
+      `;
+    } else {
+      box.innerHTML = `<span>No OTP sent yet</span>`;
+    }
+  }
+
+  // ============================================================
+  //  FETCH NUMBERS
+  // ============================================================
+  async function fetchAllNumbers() {
+    try {
+      const results = await Promise.all(
+        API_ENDPOINTS.map(async api => {
+          try {
+            const resp = await fetch(api.numbers);
+            const data = await resp.json();
+            const list = Array.isArray(data) ? data : (data && data.numbers ? data.numbers : []);
+            return list.map(n => ({ ...n, source: api.label }));
+          } catch (e) { return []; }
+        })
+      );
+      allNumbers = results.flat();
+    } catch(e) { allNumbers = []; }
+
+    document.getElementById('totalNumbers').textContent = allNumbers.length;
+    updateCountryDropdown();
+    generateNumber();
+  }
+
+  function updateCountryDropdown() {
+    const select = document.getElementById('countrySelect');
+    const availableCountries = [...new Set(allNumbers.map(n => getCountryName(n.country || n.country_name || 'Unknown')))];
+    let optionsHTML = '<option value="auto">✨ Auto Detect</option>';
+    availableCountries.forEach(country => {
+      optionsHTML += `<option value="${country}">${getFlag(country)} ${country}</option>`;
+    });
+    select.innerHTML = optionsHTML;
+    document.getElementById('totalCountries').textContent = availableCountries.length;
+  }
+
+  function generateNumber() {
+    const countrySelect = document.getElementById('countrySelect');
+    const selectedServer = document.getElementById('serverSelect').value.trim();
+    const randomNumberDisplay = document.getElementById('randomNumberDisplay');
+    const numberFlag = document.getElementById('numberFlag');
+    const numberSubText = document.getElementById('numberSubText');
+    const copyBtn = document.getElementById('copyNumberBtn');
+
+    if (allNumbers.length === 0) {
+      numberFlag.textContent = '🚫';
+      randomNumberDisplay.textContent = 'Unavailable';
+      numberSubText.textContent = 'No numbers fetched.';
+      copyBtn.classList.add('hidden');
+      return;
+    }
+
+    let filtered = allNumbers;
+    if (selectedServer !== 'all') filtered = filtered.filter(n => n.source === selectedServer);
+
+    let selectedCountry = countrySelect.value.trim();
+    if (selectedCountry === 'auto') {
+      const first = filtered.find(n => n.country || n.country_name || n.number || n.raw);
+      if (first) {
+        selectedCountry = getCountryName(first.country || first.country_name);
+        countrySelect.value = selectedCountry;
+      }
+    } else {
+      filtered = filtered.filter(n => getCountryName(n.country || n.country_name) === selectedCountry);
+    }
+
+    if (filtered.length === 0) {
+      numberFlag.textContent = '🚫';
+      randomNumberDisplay.textContent = 'Unavailable';
+      numberSubText.textContent = `No numbers active for ${selectedCountry}`;
+      copyBtn.classList.add('hidden');
+      return;
+    }
+
+    const random = filtered[Math.floor(Math.random() * filtered.length)];
+    currentNumberObj = random;
+    const numDisplay = random.raw || random.e164 || random.number || random.phone || 'N/A';
+    const cName = getCountryName(random.country || random.country_name || selectedCountry);
+
+    numberFlag.textContent = getFlag(cName);
+    randomNumberDisplay.textContent = numDisplay;
+    numberSubText.textContent = `Country: ${cName} · Server: ${random.source}`;
+    copyBtn.classList.remove('hidden');
+  }
+
+  // ============================================================
+  //  RENDER PENDING OTPs
+  // ============================================================
+  function renderPendingOtps() {
+    const tableBody = document.getElementById('otpTableBody');
+    const smsStatus = document.getElementById('smsStatus');
+    const pendingCount = document.getElementById('pendingOtps');
+
+    const now = Date.now();
+    pendingOtps = pendingOtps.filter(otp => {
+      if (otp.loggedIn) return false;
+      return (now - otp.timestamp) < 600000; // 10 minutes
+    });
+
+    pendingCount.textContent = pendingOtps.length;
+
+    if (pendingOtps.length === 0) {
+      tableBody.innerHTML = '';
+      smsStatus.textContent = 'No pending OTPs. Waiting...';
+      smsStatus.classList.remove('hidden');
+      return;
+    }
+
+    smsStatus.classList.add('hidden');
+    let html = '';
+    pendingOtps.forEach((otp, index) => {
+      const maskedNumber = maskNumberSafe(otp.number);
+      const flag = getFlag(otp.country || '');
+      const time = new Date(otp.timestamp).toLocaleTimeString();
+
+      html += `
+        <tr>
+          <td class="text-xs text-gray-400">${time}</td>
+          <td><span class="number-badge">${flag} ${maskedNumber}</span></td>
+          <td><span class="text-xs font-semibold text-blue-400">${otp.service || 'Verification'}</span></td>
+          <td>
+            <div class="text-sm mb-1">${otp.message || ''}</div>
+            <div class="text-xs font-bold text-green-400">🔑 OTP: <span class="otp-code-highlight">${otp.otp}</span></div>
+          </td>
+          <td>
+            <button class="login-btn" onclick="markLoggedIn(${index})">
+              <i data-feather="check-circle" class="w-3.5 h-3.5 inline mr-1"></i> Login
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    tableBody.innerHTML = html;
+    feather.replace();
+  }
+
+  function markLoggedIn(index) {
+    if (index >= 0 && index < pendingOtps.length) {
+      pendingOtps[index].loggedIn = true;
+      // If this was the current user's OTP, clear it
+      if (currentUserOtp && pendingOtps[index].id === currentUserOtp.id) {
+        currentUserOtp = null;
+        updateActiveOtpBox();
+      }
+      renderPendingOtps();
+    }
+  }
+
+  // ============================================================
+  //  FETCH SMS (Per-User Active OTP)
+  // ============================================================
+  async function fetchAllSms() {
+    const selectedServer = document.getElementById('serverSelect').value.trim();
+
+    let activeEndpoints = API_ENDPOINTS;
+    if (selectedServer !== 'all' && selectedServer !== 'Admin Stock') {
+      activeEndpoints = API_ENDPOINTS.filter(api => api.label === selectedServer);
+    }
+
+    let allOtps = [];
+    try {
+      const results = await Promise.all(
+        activeEndpoints.map(async api => {
+          try {
+            const resp = await fetch(api.sms);
+            const data = await resp.json();
+            return Array.isArray(data) ? data : (data.otps || data.messages || []);
+          } catch (e) { return []; }
+        })
+      );
+      allOtps = results.flat();
+    } catch(e) {}
+
+    // Clear current user's OTP if it's been logged in elsewhere (we'll just update)
+    // Since each user's browser has its own memory, we don't need to clear globally.
+
+    allOtps.forEach(row => {
+      const msg = row.message || row.msg || row.sms || '';
+      const otpMatch = msg.match(/(\b\d{3,8}\b)/);
+      const otpCode = otpMatch ? otpMatch[0] : null;
+      if (otpCode) {
+        const number = row.number || row.phone || row.target || 'N/A';
+        const country = row.country || row.country_name || '';
+        const exists = pendingOtps.some(o => o.number === number && o.otp === otpCode);
+        if (!exists) {
+          const newOtp = {
+            id: otpIdCounter++,
+            number: number,
+            otp: otpCode,
+            service: row.service || 'Verification',
+            message: msg,
+            country: country,
+            timestamp: Date.now(),
+            loggedIn: false
+          };
+          pendingOtps.push(newOtp);
+          // Set as current user's OTP (only for this browser)
+          if (!newOtp.loggedIn) {
+            currentUserOtp = newOtp;
+            updateActiveOtpBox();
+          }
+        }
+      }
+    });
+
+    renderPendingOtps();
+  }
+
+  // ============================================================
+  //  AUTO-REFRESH
+  // ============================================================
+  setInterval(fetchAllSms, 10000);
+
+  // ============================================================
+  //  EVENT BINDINGS
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', () => {
+    feather.replace();
+    fetchAllNumbers();
+    setTimeout(fetchAllSms, 1000);
+
+    document.getElementById('generateBtn').addEventListener('click', generateNumber);
+    document.getElementById('countrySelect').addEventListener('change', generateNumber);
+    document.getElementById('serverSelect').addEventListener('change', () => {
+      generateNumber();
+      fetchAllSms();
+    });
+    document.getElementById('refreshSmsBtn').addEventListener('click', fetchAllSms);
+    document.getElementById('copyNumberBtn').addEventListener('click', () => {
+      if (currentNumberObj) {
+        const num = currentNumberObj.raw || currentNumberObj.e164 || currentNumberObj.number || currentNumberObj.phone || '';
+        if (num) navigator.clipboard.writeText(num);
+      }
+    });
+  });
+</script>
+</body>
+</html>
