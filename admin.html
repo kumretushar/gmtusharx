@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard · GM TUSHARX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: rgba(255,255,255,0.04);
+      --surface2: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.08);
+      --text: #f1f5f9;
+      --text2: #94a3b8;
+      --accent: #38bdf8;
+      --accent2: #0284c7;
+      --radius: 20px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    body.light {
+      --bg: #f1f5f9;
+      --surface: rgba(255,255,255,0.6);
+      --surface2: rgba(255,255,255,0.8);
+      --border: rgba(0,0,0,0.06);
+      --text: #0f172a;
+      --text2: #475569;
+      --shadow: 0 8px 32px rgba(0,0,0,0.06);
+      --accent: #2563eb;
+      --accent2: #1d4ed8;
+    }
+    body.neon {
+      --bg: #0a0a0a;
+      --surface: rgba(57,255,20,0.04);
+      --surface2: rgba(57,255,20,0.06);
+      --border: rgba(57,255,20,0.12);
+      --text: #e0ffe0;
+      --text2: #a0f0a0;
+      --accent: #39ff14;
+      --accent2: #00cc00;
+      --shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 20px;
+      transition: background 0.4s, color 0.4s, border-color 0.4s, box-shadow 0.4s;
+      background-image: radial-gradient(circle at 30% 40%, var(--accent) 0%, transparent 70%);
+      background-attachment: fixed;
+    }
+    .app { max-width: 1400px; margin: 0 auto; }
+    .glass {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: 0.3s;
+    }
+    .glass:hover { border-color: var(--accent); box-shadow: 0 8px 40px rgba(56,189,248,0.05); }
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px; padding: 16px 24px;
+    }
+    .logo h1 {
+      font-weight: 900; font-size: 1.5rem;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .btn-ghost {
+      padding: 8px 18px; border-radius: 40px; font-weight: 700; font-size: 0.8rem;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text); cursor: pointer; transition: 0.3s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .btn-ghost:hover { border-color: var(--accent); background: rgba(56,189,248,0.08); box-shadow: 0 0 20px var(--accent); }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px; margin: 20px 0;
+    }
+    .stat-card {
+      padding: 16px 20px; background: var(--surface2);
+      border-radius: 16px; border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      transition: 0.3s;
+    }
+    .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 0 30px var(--accent); }
+    .stat-card .label { font-size: 0.65rem; text-transform: uppercase; color: var(--text2); font-weight: 700; letter-spacing: 0.5px; }
+    .stat-card .value { font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-top: 4px; }
+    .table-wrap {
+      max-height: 60vh; overflow-y: auto;
+      border-radius: 16px; border: 1px solid var(--border);
+    }
+    .table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .table-wrap th {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--surface); padding: 12px 16px; text-align: left;
+      color: var(--text2); font-weight: 700; text-transform: uppercase; font-size: 0.7rem;
+      letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+    .table-wrap td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .table-wrap tr:hover td { background: var(--surface2); }
+    .badge {
+      display: inline-block; padding: 2px 10px; border-radius: 20px; font-weight: 600; font-size: 0.7rem;
+    }
+    .badge.active { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
+    .badge.inactive { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
+    .badge.pending { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+    .btn-sm {
+      padding: 4px 12px; border-radius: 8px; font-weight: 600; font-size: 0.7rem; border: none; cursor: pointer; transition: 0.2s;
+    }
+    .btn-sm.ban { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
+    .btn-sm.ban:hover { background: rgba(248,113,113,0.25); }
+    .btn-sm.unban { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
+    .btn-sm.unban:hover { background: rgba(74,222,128,0.25); }
+    .btn-sm.delete { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
+    .btn-sm.delete:hover { background: rgba(248,113,113,0.25); }
+    .lock-toggle {
+      display: flex; align-items: center; gap: 16px;
+      padding: 12px 16px; background: var(--surface2);
+      border-radius: 12px; border: 1px solid var(--border);
+      margin: 8px 0;
+    }
+    .lock-toggle .status.locked { color: #ef4444; }
+    .lock-toggle .status.unlocked { color: #22c55e; }
+    #maintenancePage {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; text-align: center; padding: 20px;
+    }
+    #maintenancePage .icon { font-size: 4rem; margin-bottom: 16px; }
+    #maintenancePage h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    #maintenancePage p { color: var(--text2); max-width: 400px; }
+    #maintenancePage .btn { margin-top: 20px; padding: 10px 30px; border-radius: 40px; background: var(--accent); color: #fff; border: none; font-weight: 600; cursor: pointer; }
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body class="dark">
+<div class="app" id="mainApp">
+
+  <!-- ===== HEADER ===== -->
+  <div class="glass header">
+    <div class="logo"><h1>🔐 Admin Dashboard</h1></div>
+    <div class="flex items-center gap-3">
+      <button class="btn-ghost" id="themeToggle"><i data-feather="sun" class="w-4 h-4"></i> <span id="themeLabel">Dark</span></button>
+      <button class="btn-ghost" onclick="window.location.href='index.html'"><i data-feather="arrow-left" class="w-4 h-4"></i> Back</button>
+    </div>
+  </div>
+
+  <!-- ===== WEB LOCK TOGGLE ===== -->
+  <div class="glass p-4 mb-4">
+    <div class="lock-toggle">
+      <i data-feather="lock" class="w-5 h-5 text-gray-400"></i>
+      <span class="status" id="lockStatus">🔴 Locked</span>
+      <button class="btn-glow" id="lockToggleBtn" style="padding:8px 18px;">Toggle Lock</button>
+      <span style="font-size:0.7rem; color:var(--text2); margin-left:auto;">Affects all users</span>
+    </div>
+  </div>
+
+  <!-- ===== STATS ===== -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="label">📦 Total OTPs</div><div class="value" id="totalOtps">0</div></div>
+    <div class="stat-card"><div class="label">👥 Total Users</div><div class="value" id="totalUsers">0</div></div>
+    <div class="stat-card"><div class="label">📅 Today's OTPs</div><div class="value" id="todayOtps">0</div></div>
+    <div class="stat-card"><div class="label">⚡ Active Now</div><div class="value" id="activeNow">0</div></div>
+  </div>
+
+  <!-- ===== CONTROLS ===== -->
+  <div class="glass p-4 mb-4">
+    <div class="flex flex-wrap gap-3 items-center">
+      <input id="searchInput" type="text" placeholder="🔍 Search number, service..." class="custom-select" style="flex:1; min-width:180px;" />
+      <select id="filterService" class="custom-select" style="width:auto;">
+        <option value="all">All Services</option>
+        <option value="telegram">Telegram</option>
+        <option value="whatsapp">WhatsApp</option>
+        <option value="tiktok">TikTok</option>
+        <option value="instagram">Instagram</option>
+        <option value="google">Google</option>
+        <option value="apple">Apple</option>
+        <option value="bank">Bank/UPI</option>
+      </select>
+      <button class="btn-glow" onclick="fetchAllLogs()" style="padding:15px 18px;"><i data-feather="refresh-cw" class="w-4 h-4"></i> Refresh</button>
+    </div>
+  </div>
+
+  <!-- ===== OTP LOGS TABLE ===== -->
+  <div class="glass p-5">
+    <div class="flex justify-between items-center mb-3">
+      <h2 class="text-base font-bold flex items-center gap-2"><i data-feather="list" class="w-5 h-5 text-blue-400"></i> Live OTP Logs</h2>
+      <span id="logCount" class="text-xs text-gray-400">0 logs</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Time</th>
+            <th>Number</th>
+            <th>Service</th>
+            <th>OTP</th>
+            <th>Country</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="logsTableBody">
+          <tr><td colspan="8" class="py-6 text-center text-gray-400">Loading logs...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== USER MANAGEMENT ===== -->
+  <div class="glass p-5 mt-4">
+    <div class="flex justify-between items-center mb-3">
+      <h2 class="text-base font-bold flex items-center gap-2"><i data-feather="users" class="w-5 h-5 text-blue-400"></i> User Management</h2>
+    </div>
+    <div class="table-wrap" style="max-height: 30vh;">
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>OTPs Received</th>
+            <th>Last Seen</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody">
+          <tr><td colspan="6" class="py-6 text-center text-gray-400">Loading users...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="text-center text-xs text-gray-400 mt-6 pt-4 border-t border-gray-800">
+    <span>Powered by <span class="font-bold text-sky-400">GM TUSHARX 🍁</span></span>
+  </footer>
+</div>
+
+<div id="maintenancePage">
+  <div class="icon">🔒</div>
+  <h1>Under Maintenance</h1>
+  <p>The website is currently locked by the admin. Please check back later.</p>
+  <button class="btn" onclick="location.reload()">Try Again</button>
+</div>
+
+<script>
+  // ============================================================
+  //  WEB LOCK API CONFIG
+  // ============================================================
+  const LOCK_API_URL = "https://webapi-jade.vercel.app/web_lock"; // <-- CHANGE
+  let isLocked = false;
+
+  async function fetchLockStatus() {
+    try {
+      const resp = await fetch(`${LOCK_API_URL}/status`);
+      const data = await resp.json();
+      isLocked = data.locked;
+      updateLockUI();
+    } catch (e) {
+      console.warn('Lock status fetch failed');
+    }
+  }
+
+  async function toggleWebLock() {
+    const newStatus = !isLocked;
+    try {
+      const resp = await fetch(`${LOCK_API_URL}/toggle`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ locked: newStatus })
+      });
+      const data = await resp.json();
+      isLocked = data.locked;
+      updateLockUI();
+      alert(`🔒 Web Lock is now ${isLocked ? 'ON' : 'OFF'}`);
+    } catch (e) {
+      alert('Error toggling lock. Check API.');
+    }
+  }
+
+  function updateLockUI() {
+    const status = document.getElementById('lockStatus');
+    if (isLocked) {
+      status.textContent = '🔴 Locked';
+      status.className = 'status locked';
+    } else {
+      status.textContent = '🟢 Unlocked';
+      status.className = 'status unlocked';
+    }
+  }
+
+  document.getElementById('lockToggleBtn').addEventListener('click', toggleWebLock);
+
+  // ============================================================
+  //  THEME TOGGLE
+  // ============================================================
+  const themes = ['dark', 'light', 'neon'];
+  const themeLabels = ['Dark', 'Light', 'Neon'];
+  let currentThemeIndex = 0;
+
+  document.getElementById('themeToggle').addEventListener('click', function() {
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    const theme = themes[currentThemeIndex];
+    document.body.className = theme;
+    document.getElementById('themeLabel').textContent = themeLabels[currentThemeIndex];
+    const icon = this.querySelector('i');
+    if (theme === 'dark') icon.setAttribute('data-feather', 'moon');
+    else if (theme === 'light') icon.setAttribute('data-feather', 'sun');
+    else icon.setAttribute('data-feather', 'zap');
+    feather.replace();
+  });
+
+  // ============================================================
+  //  API ENDPOINTS
+  // ============================================================
+  const API_ENDPOINTS = [
+    { label: 'Konekta', sms: 'https://hadi-sms.vercel.app/sms' },
+    { label: 'NP Node', sms: 'https://sms-api2-virid.vercel.app/sms' },
+    { label: 'HADI Feed', sms: 'https://kk-sms.vercel.app/sms' }
+  ];
+
+  const COUNTRY_FLAGS = {
+    'india':'🇮🇳','bangladesh':'🇧🇩','pakistan':'🇵🇰','usa':'🇺🇸','uk':'🇬🇧','uae':'🇦🇪',
+    'venezuela':'🇻🇪','canada':'🇨🇦','australia':'🇦🇺','germany':'🇩🇪','france':'🇫🇷',
+    'italy':'🇮🇹','spain':'🇪🇸','japan':'🇯🇵','china':'🇨🇳','brazil':'🇧🇷','mexico':'🇲🇽',
+    'russia':'🇷🇺','south africa':'🇿🇦','egypt':'🇪🇬','nigeria':'🇳🇬','saudi arabia':'🇸🇦',
+    'turkey':'🇹🇷','thailand':'🇹🇭','vietnam':'🇻🇳','indonesia':'🇮🇩','malaysia':'🇲🇾',
+    'philippines':'🇵🇭','singapore':'🇸🇬','new zealand':'🇳🇿','argentina':'🇦🇷','chile':'🇨🇱',
+    'qatar':'🇶🇦','kuwait':'🇰🇼','oman':'🇴🇲','bahrain':'🇧🇭'
+  };
+
+  function getFlag(country) {
+    if (!country) return '🌍';
+    return COUNTRY_FLAGS[country.trim().toLowerCase()] || '🌍';
+  }
+
+  function getCountryName(raw) {
+    if (!raw) return 'Unknown';
+    const c = raw.trim();
+    if (c.toLowerCase() === 'us' || c.toLowerCase() === 'usa') return 'United States';
+    if (c.toLowerCase() === 'uk') return 'United Kingdom';
+    if (c.toLowerCase() === 'uae') return 'United Arab Emirates';
+    return c.charAt(0).toUpperCase() + c.slice(1).toLowerCase();
+  }
+
+  function maskNumber(raw) {
+    if (!raw) return 'N/A';
+    const clean = raw.toString().replace(/\D/g, '');
+    if (clean.length <= 4) return clean;
+    return clean.slice(0, 2) + 'xxxx' + clean.slice(-2);
+  }
+
+  function detectService(msg) {
+    if (!msg) return 'Verification';
+    const msgLower = msg.toLowerCase();
+    const services = {
+      'telegram': ['telegram', 'tg', '@', 't.me'],
+      'whatsapp': ['whatsapp', 'wa.me', 'your whatsapp code', 'whatsapp verification'],
+      'tiktok': ['tiktok', 'tt'],
+      'instagram': ['instagram', 'insta', 'ig'],
+      'facebook': ['facebook', 'fb', 'meta'],
+      'google': ['google', 'gmail', 'youtube', 'g-'],
+      'apple': ['apple', 'icloud', 'ios'],
+      'microsoft': ['microsoft', 'outlook', 'hotmail'],
+      'amazon': ['amazon', 'aws'],
+      'paypal': ['paypal', 'pp'],
+      'netflix': ['netflix', 'nf'],
+      'spotify': ['spotify', 'sp'],
+      'discord': ['discord', 'dc'],
+      'twitter': ['twitter', 'x', 't.co'],
+      'github': ['github', 'gh'],
+      'linkedin': ['linkedin', 'li'],
+      'snapchat': ['snapchat', 'snap'],
+      'reddit': ['reddit', 'rdt'],
+      'uber': ['uber'],
+      'bank': ['bank', 'upi', 'paytm', 'gpay', 'phonepe']
+    };
+    for (const [service, words] of Object.entries(services)) {
+      for (const word of words) {
+        if (msgLower.includes(word)) return service.charAt(0).toUpperCase() + service.slice(1);
+      }
+    }
+    return 'Verification';
+  }
+
+  function extractOTP(msg) {
+    if (!msg) return null;
+    let match = msg.match(/\b(\d{3,8})\b/);
+    if (match) return match[1];
+    match = msg.match(/[Oo][Tt][Pp]\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Cc]ode\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Vv]erification\s*[Cc]ode\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Yy]our\s*[Oo][Tt][Pp]\s*[Ii][Ss]\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Ii][Ss]\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/(\d{3}\s?\d{3}\s?\d{2})/);
+    if (match) return match[1].replace(/\s/g, '');
+    match = msg.match(/[\[\(](\d{3,8})[\]\)]/);
+    if (match) return match[1];
+    match = msg.match(/\b(\d{6})\b/);
+    if (match) return match[1];
+    match = msg.match(/\b(\d{4})\b/);
+    if (match) return match[1];
+    return null;
+  }
+
+  // ============================================================
+  //  STATE
+  // ============================================================
+  let allLogs = [];
+  let users = [];
+  let otpIdCounter = 0;
+
+  // ============================================================
+  //  FETCH SMS
+  // ============================================================
+  async function fetchAllSms() {
+    let allOtps = [];
+    for (const api of API_ENDPOINTS) {
+      try {
+        const resp = await fetch(api.sms, { timeout: 5000 });
+        if (!resp.ok) continue;
+        const data = await resp.json();
+        const list = Array.isArray(data) ? data : (data.otps || data.messages || []);
+        allOtps.push(...list.map(o => ({ ...o, source: api.label })));
+      } catch (e) {
+        console.warn(`API ${api.label} failed:`, e);
+      }
+    }
+    return allOtps;
+  }
+
+  // ============================================================
+  //  PROCESS LOGS
+  // ============================================================
+  function processLogs(otps) {
+    const logs = [];
+    const userMap = new Map();
+
+    otps.forEach(row => {
+      const msg = row.message || row.msg || row.sms || '';
+      const otp = extractOTP(msg);
+      if (!otp) return;
+      
+      const number = row.number || row.phone || row.target || 'N/A';
+      const country = row.country || row.country_name || '';
+      const service = detectService(msg);
+      const timestamp = row.timestamp || new Date().toISOString();
+      const source = row.source || 'API';
+      const status = 'pending';
+      const id = otpIdCounter++;
+
+      logs.push({
+        id,
+        number,
+        masked: maskNumber(number),
+        otp,
+        service,
+        country,
+        flag: getFlag(country),
+        timestamp,
+        source,
+        status,
+        message: msg.slice(0, 100)
+      });
+
+      if (number !== 'N/A') {
+        const key = number;
+        if (!userMap.has(key)) {
+          userMap.set(key, {
+            user_id: key,
+            username: row.username || 'Unknown',
+            otps_received: 0,
+            last_seen: timestamp
+          });
+        }
+        userMap.get(key).otps_received += 1;
+        userMap.get(key).last_seen = timestamp;
+      }
+    });
+
+    logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    users = Array.from(userMap.values());
+    allLogs = logs;
+    return logs;
+  }
+
+  // ============================================================
+  //  RENDER FUNCTIONS
+  // ============================================================
+  function renderStats() {
+    const today = new Date().toDateString();
+    const todayOtps = allLogs.filter(l => new Date(l.timestamp).toDateString() === today);
+    document.getElementById('totalOtps').textContent = allLogs.length;
+    document.getElementById('totalUsers').textContent = users.length;
+    document.getElementById('todayOtps').textContent = todayOtps.length;
+    document.getElementById('activeNow').textContent = allLogs.filter(l => l.status === 'pending').length;
+  }
+
+  function renderLogs(filteredLogs) {
+    const tableBody = document.getElementById('logsTableBody');
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const serviceFilter = document.getElementById('filterService').value;
+    
+    let logs = filteredLogs || allLogs;
+    if (search) {
+      logs = logs.filter(l => l.number.toLowerCase().includes(search) || l.service.toLowerCase().includes(search));
+    }
+    if (serviceFilter !== 'all') {
+      logs = logs.filter(l => l.service.toLowerCase() === serviceFilter);
+    }
+
+    if (logs.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-gray-400">No logs found.</td></tr>`;
+      document.getElementById('logCount').textContent = '0 logs';
+      return;
+    }
+
+    let html = '';
+    logs.forEach((log, index) => {
+      const statusClass = log.status === 'pending' ? 'pending' : 'active';
+      html += `
+        <tr>
+          <td class="text-xs text-gray-500">${index + 1}</td>
+          <td class="text-xs text-gray-400">${new Date(log.timestamp).toLocaleTimeString()}</td>
+          <td><span class="number-badge">${log.flag} ${log.masked}</span></td>
+          <td><span class="text-xs font-semibold text-blue-400">${log.service}</span></td>
+          <td><span class="otp-code-highlight">${log.otp}</span></td>
+          <td><span class="text-xs">${getCountryName(log.country)}</span></td>
+          <td><span class="badge ${statusClass}">${log.status}</span></td>
+          <td>
+            <button class="btn-sm ban" onclick="banUser('${log.number}')">Ban</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    tableBody.innerHTML = html;
+    document.getElementById('logCount').textContent = `${logs.length} logs`;
+    feather.replace();
+  }
+
+  function renderUsers() {
+    const tableBody = document.getElementById('usersTableBody');
+    if (users.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-gray-400">No users found.</td></tr>`;
+      return;
+    }
+
+    let html = '';
+    users.slice(0, 50).forEach(user => {
+      const lastSeen = user.last_seen ? new Date(user.last_seen).toLocaleString() : 'Never';
+      html += `
+        <tr>
+          <td class="text-xs font-mono">${user.user_id}</td>
+          <td class="text-xs">${user.username}</td>
+          <td class="text-xs text-center">${user.otps_received}</td>
+          <td class="text-xs text-gray-400">${lastSeen}</td>
+          <td><span class="badge active">Active</span></td>
+          <td>
+            <button class="btn-sm ban" onclick="banUser('${user.user_id}')">Ban</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    tableBody.innerHTML = html;
+    feather.replace();
+  }
+
+  // ============================================================
+  //  ADMIN ACTIONS
+  // ============================================================
+  function banUser(userId) {
+    if (confirm(`Ban user ${userId}?`)) {
+      const banned = JSON.parse(localStorage.getItem('bannedUsers') || '[]');
+      if (!banned.includes(userId)) {
+        banned.push(userId);
+        localStorage.setItem('bannedUsers', JSON.stringify(banned));
+        alert(`✅ User ${userId} banned.`);
+        fetchAllLogs();
+      } else {
+        alert('User already banned.');
+      }
+    }
+  }
+
+  function unbanUser(userId) {
+    const banned = JSON.parse(localStorage.getItem('bannedUsers') || '[]');
+    const updated = banned.filter(id => id !== userId);
+    localStorage.setItem('bannedUsers', JSON.stringify(updated));
+    alert(`✅ User ${userId} unbanned.`);
+    fetchAllLogs();
+  }
+
+  // ============================================================
+  //  FETCH & REFRESH ALL
+  // ============================================================
+  async function fetchAllLogs() {
+    const btn = document.querySelector('.btn-glow:not(#lockToggleBtn)');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin"></i> Loading...';
+    }
+    
+    const otps = await fetchAllSms();
+    processLogs(otps);
+    renderStats();
+    renderLogs();
+    renderUsers();
+    
+    if (btn) {
+      btn.innerHTML = '<i data-feather="refresh-cw" class="w-4 h-4"></i> Refresh';
+      btn.disabled = false;
+      feather.replace();
+    }
+  }
+
+  // ============================================================
+  //  EVENT BINDINGS
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', async () => {
+    await fetchLockStatus();
+    feather.replace();
+    fetchAllLogs();
+
+    document.getElementById('searchInput').addEventListener('input', () => renderLogs());
+    document.getElementById('filterService').addEventListener('change', () => renderLogs());
+
+    setInterval(fetchAllLogs, 10000);
+  });
+</script>
+</body>
+</html>

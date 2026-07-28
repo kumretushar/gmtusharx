@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GM TUSHARX VIRTUAL · File Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: rgba(255,255,255,0.04);
+      --surface2: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.08);
+      --text: #f1f5f9;
+      --text2: #94a3b8;
+      --accent: #38bdf8;
+      --accent2: #0284c7;
+      --radius: 20px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    body.light {
+      --bg: #f1f5f9;
+      --surface: rgba(255,255,255,0.6);
+      --surface2: rgba(255,255,255,0.8);
+      --border: rgba(0,0,0,0.06);
+      --text: #0f172a;
+      --text2: #475569;
+      --shadow: 0 8px 32px rgba(0,0,0,0.06);
+      --accent: #2563eb;
+      --accent2: #1d4ed8;
+    }
+    body.neon {
+      --bg: #0a0a0a;
+      --surface: rgba(57,255,20,0.04);
+      --surface2: rgba(57,255,20,0.06);
+      --border: rgba(57,255,20,0.12);
+      --text: #e0ffe0;
+      --text2: #a0f0a0;
+      --accent: #39ff14;
+      --accent2: #00cc00;
+      --shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 20px;
+      transition: background 0.4s, color 0.4s, border-color 0.4s, box-shadow 0.4s;
+      background-image: radial-gradient(circle at 30% 40%, var(--accent) 0%, transparent 70%);
+      background-attachment: fixed;
+    }
+    .app { max-width: 1200px; margin: 0 auto; }
+    .glass {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: 0.3s;
+    }
+    .glass:hover { border-color: var(--accent); box-shadow: 0 8px 40px rgba(56,189,248,0.05); }
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px; padding: 16px 24px;
+    }
+    .logo { display: flex; align-items: center; gap: 14px; }
+    .logo img {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 20px var(--accent), 0 0 40px rgba(56,189,248,0.05);
+      animation: pulse-glow 3s ease-in-out infinite;
+      transition: 0.3s;
+    }
+    .logo img:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--accent), 0 0 60px rgba(56,189,248,0.08); }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px var(--accent), 0 0 40px rgba(56,189,248,0.05); }
+      50% { box-shadow: 0 0 30px var(--accent), 0 0 60px rgba(56,189,248,0.08); }
+    }
+    .logo h1 {
+      font-weight: 900; font-size: 1.5rem; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-btns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .btn-ghost {
+      padding: 8px 18px; border-radius: 40px; font-weight: 700; font-size: 0.8rem;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text); cursor: pointer; transition: 0.3s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .btn-ghost:hover { border-color: var(--accent); background: rgba(56,189,248,0.08); box-shadow: 0 0 20px var(--accent); }
+    
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px; margin: 20px 0;
+    }
+    .stat-card {
+      padding: 16px 20px; background: var(--surface2);
+      border-radius: 16px; border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      transition: 0.3s;
+    }
+    .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 0 30px var(--accent); }
+    .stat-card .label { font-size: 0.65rem; text-transform: uppercase; color: var(--text2); font-weight: 700; letter-spacing: 0.5px; }
+    .stat-card .value { font-size: 1.5rem; font-weight: 800; color: var(--accent); margin-top: 4px; }
+    .stat-card .active-otp {
+      font-size: 0.95rem; font-weight: 700; color: #4ade80;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .stat-card .active-otp .otp-code {
+      background: rgba(74,222,128,0.12);
+      padding: 2px 12px; border-radius: 8px;
+      border: 1px solid rgba(74,222,128,0.2);
+      font-family: monospace;
+      animation: pulse-otp 2s infinite;
+    }
+    @keyframes pulse-otp {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.1); }
+      50% { box-shadow: 0 0 20px 4px rgba(74,222,128,0.04); }
+    }
+    .controls-panel { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .custom-select {
+      background: var(--surface2) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text) !important;
+      padding: 12px 16px; border-radius: 14px;
+      font-size: 0.9rem; font-weight: 600; width: 100%; cursor: pointer;
+      outline: none; transition: 0.3s;
+      backdrop-filter: blur(8px);
+    }
+    .custom-select:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 3px var(--accent); }
+    .btn-glow {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-weight: 700; border: none;
+      padding: 12px 22px; border-radius: 14px; cursor: pointer;
+      transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 0.9rem; box-shadow: 0 0 20px -4px var(--accent);
+    }
+    .btn-glow:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 0 30px -4px var(--accent); }
+    .number-box {
+      padding: 28px 20px; text-align: center; margin: 20px 0;
+      background: var(--surface2); border-radius: 18px; border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+    .number-box .number {
+      font-size: 2.5rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      word-break: break-all;
+      text-shadow: 0 0 40px var(--accent);
+    }
+    .number-box .flag { font-size: 2rem; margin-right: 12px; vertical-align: middle; }
+    .table-wrap {
+      max-height: 55vh; overflow-y: auto;
+      border-radius: 16px; border: 1px solid var(--border);
+    }
+    .table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .table-wrap th {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--surface); padding: 12px 16px; text-align: left;
+      color: var(--text2); font-weight: 700; text-transform: uppercase; font-size: 0.7rem;
+      letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+    .table-wrap td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .table-wrap tr:hover td { background: var(--surface2); }
+    .number-badge {
+      font-weight: 700; background: var(--surface);
+      padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .otp-code-highlight {
+      color: #4ade80; font-weight: 800;
+      background: rgba(74,222,128,0.08);
+      padding: 4px 14px; border-radius: 8px;
+      border: 1px solid rgba(74,222,128,0.15);
+      font-size: 1.05rem;
+    }
+    .copy-btn {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text); cursor: pointer;
+      padding: 6px 14px; border-radius: 10px; font-weight: 600; font-size: 0.8rem;
+      transition: 0.2s;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,0.05); }
+    .login-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a); border: none; color: #fff; cursor: pointer;
+      padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.8rem;
+      transition: 0.2s;
+    }
+    .login-btn:hover { opacity: 0.85; transform: scale(1.02); }
+    .service-filter {
+      display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0;
+    }
+    .service-filter button {
+      padding: 6px 16px; border-radius: 40px; font-size: 0.7rem; font-weight: 700;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text2); cursor: pointer; transition: 0.3s;
+      backdrop-filter: blur(8px);
+    }
+    .service-filter button:hover {
+      border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,0.05);
+      box-shadow: 0 0 20px var(--accent);
+    }
+    .service-filter button.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; border-color: transparent; box-shadow: 0 0 25px -4px var(--accent);
+    }
+    .service-filter button.hidden { display: none; }
+
+    .support-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(16px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .support-overlay.show { display: flex; }
+    .support-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      max-width: 520px;
+      width: 100%;
+      padding: 32px 28px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      backdrop-filter: blur(20px);
+      position: relative;
+      animation: fadeUp 0.3s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .support-card .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .support-card .close-btn:hover { color: var(--text); }
+    .support-card .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .support-card .logo-container img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 30px var(--accent), 0 0 60px rgba(56,189,248,0.1);
+      animation: pulse-glow 3s ease-in-out infinite;
+      transition: 0.3s;
+    }
+    .support-card .logo-container img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px var(--accent), 0 0 80px rgba(56,189,248,0.15);
+    }
+    .support-card h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .support-card .subtitle {
+      text-align: center;
+      color: var(--text2);
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+    .support-card .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0;
+    }
+    .support-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      text-decoration: none;
+      transition: 0.3s;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .support-btn:hover {
+      border-color: var(--accent);
+      background: rgba(56,189,248,0.05);
+      transform: translateX(4px);
+      box-shadow: 0 0 30px rgba(56,189,248,0.05);
+    }
+    .support-btn .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.2rem;
+    }
+    .support-btn .btn-icon.whatsapp { background: rgba(37,211,102,0.15); color: #25D366; }
+    .support-btn .btn-icon.telegram { background: rgba(0,136,204,0.15); color: #0088cc; }
+    .support-btn .btn-icon.otp { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+    .support-btn .btn-icon.email { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .support-btn .btn-text { flex: 1; }
+    .support-btn .btn-text .main { font-size: 0.95rem; font-weight: 700; }
+    .support-btn .btn-text .sub { font-size: 0.75rem; color: var(--text2); }
+    .support-btn .btn-arrow { color: var(--text2); transition: 0.3s; }
+    .support-btn:hover .btn-arrow { transform: translateX(4px); color: var(--accent); }
+    .support-card .premium-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin: 12px 0;
+      border-left: 4px solid var(--accent);
+    }
+    .support-card .premium-box p {
+      font-size: 0.85rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+    .support-card .premium-box strong { color: var(--text); }
+    .support-card .premium-box .highlight { color: var(--accent); font-weight: 700; }
+    .support-card .btn-close-support {
+      width: 100%;
+      padding: 12px;
+      border-radius: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 12px;
+      font-size: 0.95rem;
+    }
+    .support-card .btn-close-support:hover { opacity: 0.85; transform: scale(1.01); }
+
+    #maintenancePage {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; text-align: center; padding: 20px;
+    }
+    #maintenancePage .icon { font-size: 4rem; margin-bottom: 16px; }
+    #maintenancePage h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    #maintenancePage p { color: var(--text2); max-width: 400px; }
+    #maintenancePage .btn { margin-top: 20px; padding: 10px 30px; border-radius: 40px; background: var(--accent); color: #fff; border: none; font-weight: 600; cursor: pointer; }
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .number-box .number { font-size: 1.8rem; }
+      .controls-panel .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="dark">
+<div class="app" id="mainApp">
+
+  <div class="glass header">
+    <div class="logo">
+      <img src="https://i.imgpeek.com/ZCAyZIPKJzLs" alt="GM" />
+      <h1>𝐍ᴜᴍʙᴇʀ 𝐒ᴜʀᴠɪᴄᴇ 🍁</h1>
+    </div>
+    <div class="header-btns">
+      <button class="btn-ghost" id="themeToggle">
+        <i data-feather="sun" class="w-4 h-4"></i> <span id="themeLabel">Dark</span>
+      </button>
+      <button class="btn-ghost" onclick="openSupport()">
+        <i data-feather="life-buoy" class="w-4 h-4"></i> Support
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="label">📞 Total Numbers</div><div class="value" id="totalNumbers">0</div></div>
+    <div class="stat-card"><div class="label">🌍 Total Countries</div><div class="value" id="totalCountries">0</div></div>
+    <div class="stat-card"><div class="label">⏳ Pending OTPs</div><div class="value" id="pendingOtps">0</div></div>
+    <div class="stat-card" id="activeOtpBox">
+      <div class="label">🟢 Your Active OTP</div>
+      <div class="active-otp" id="activeOtpDisplay"><span>No OTP sent yet</span></div>
+    </div>
+  </div>
+
+<div class="glass controls-panel" style="padding: 20px;">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="select-group">
+      <label class="text-xs font-bold text-gray-400 uppercase">🌍 Select Country</label>
+      <select id="countrySelect" class="custom-select"><option value="auto">✨ Auto Detect</option></select>
+    </div>
+    <div class="select-group">
+      <label class="text-xs font-bold text-gray-400 uppercase">⚙️ Server Node</label>
+      <select id="serverSelect" class="custom-select">
+        <option value="all">⚡ All Servers</option>
+        <option value="Admin Stock">⭐ Admin Stock</option>
+        <option value="Konekta">Server 1</option>
+        <option value="NP Node">Server 2</option>
+        <option value="HADI Feed">Server 3</option>
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button id="generateBtn" class="btn-glow w-full"><i data-feather="refresh-cw" class="w-4 h-4"></i> Get Number</button>
+      <button id="refreshSmsBtn" class="btn-glow w-full"><i data-feather="rotate-cw" class="w-4 h-4"></i> OTP</button>
+    </div>
+  </div>
+  <!-- Service filter moved INSIDE the controls panel with a top border separator -->
+  <div class="flex items-center gap-3 flex-wrap mt-4 pt-4 border-t border-[var(--border)]">
+    <span class="text-xs font-bold text-gray-400 whitespace-nowrap">🔍 Filter by Service:</span>
+    <div class="service-filter" id="serviceFilter">
+      <button class="active" data-service="all">All</button>
+    </div>
+  </div>
+</div>
+  <div class="number-box">
+    <div><span class="flag" id="numberFlag">🌍</span><span class="number" id="randomNumberDisplay">Loading...</span></div>
+    <div class="mt-3"><button id="copyNumberBtn" class="copy-btn hidden"><i data-feather="copy" class="w-4 h-4"></i> Copy</button></div>
+    <p id="numberSubText" class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="glass p-5">
+    <div class="flex justify-between items-center mb-3">
+      <h2 class="text-base font-bold flex items-center gap-2"><i data-feather="inbox" class="w-5 h-5 text-blue-400"></i> Live OTP Feed</h2>
+      <span id="filterStatus" class="text-xs text-gray-400">Showing: All</span>
+    </div>
+    <div id="smsStatus" class="text-center text-gray-400 py-6">Connecting...</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Time</th><th>Number</th><th>Service</th><th>Message & OTP</th><th>Action</th></tr></thead>
+        <tbody id="otpTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="text-center text-xs text-gray-400 mt-6 pt-4 border-t border-gray-800">
+    <span>Powered by <span class="font-bold text-sky-400">GM TUSHARX 🍁</span></span>
+  </footer>
+</div>
+
+<!-- ===== SUPPORT POPUP ===== -->
+<div class="support-overlay" id="supportOverlay">
+  <div class="support-card">
+    <button class="close-btn" onclick="closeSupport()">✕</button>
+    <div class="logo-container">
+      <img src="https://i.imgpeek.com/ZCAyZIPKJzLs" alt="GM" />
+    </div>
+    <h2>GM TUSHARX</h2>
+    <div class="subtitle">Premium Support &amp; Resources</div>
+    <div class="premium-box">
+      <p><strong>⚠️ OTP Not Showing?</strong><br>If OTP is not appearing on the website,<br>check the <span class="highlight">Telegram OTP Group</span> below.<br>All OTPs are automatically forwarded there.</p>
+    </div>
+    <div class="divider"></div>
+    <a href="https://wa.me/584269078224" target="_blank" class="support-btn">
+      <span class="btn-icon whatsapp"><i data-feather="message-circle" class="w-5 h-5"></i></span>
+      <span class="btn-text"><span class="main">WhatsApp</span><span class="sub">Personal Chat Support</span></span>
+      <span class="btn-arrow">→</span>
+    </a>
+    <a href="https://t.me/gmtusharxfiles" target="_blank" class="support-btn">
+      <span class="btn-icon telegram"><i data-feather="send" class="w-5 h-5"></i></span>
+      <span class="btn-text"><span class="main">Telegram Channel</span><span class="sub">Updates &amp; Announcements</span></span>
+      <span class="btn-arrow">→</span>
+    </a>
+    <a href="https://t.me/trxxotp" target="_blank" class="support-btn">
+      <span class="btn-icon otp"><i data-feather="message-square" class="w-5 h-5"></i></span>
+      <span class="btn-text"><span class="main">🔑 OTP Telegram Group</span><span class="sub">Live OTPs &amp; Support</span></span>
+      <span class="btn-arrow">→</span>
+    </a>
+    <a href="#" class="support-btn" onclick="closeSupport(); return false;">
+      <span class="btn-icon email"><i data-feather="mail" class="w-5 h-5"></i></span>
+      <span class="btn-text"><span class="main">Email Support</span><span class="sub">For business inquiries</span></span>
+      <span class="btn-arrow">→</span>
+    </a>
+    <div class="divider"></div>
+    <div style="font-size:0.7rem; color:var(--text2); text-align:center; padding:4px 0;">
+      <p>🇮🇳 India · 🇧🇩 Bangladesh · 🇵🇰 Pakistan · 🇺🇸 USA</p>
+      <p style="margin-top:4px;">© 2026 GM TUSHARX · All rights reserved.</p>
+    </div>
+    <button class="btn-close-support" onclick="closeSupport()">Close</button>
+  </div>
+</div>
+
+<div id="maintenancePage">
+  <div class="icon">🔒</div>
+  <h1>Under Maintenance</h1>
+  <p>The website is currently locked by the admin. Please check back later.</p>
+  <button class="btn" onclick="location.reload()">Try Again</button>
+</div>
+
+<script>
+  // ============================================================
+  //  WEB LOCK CHECK (MongoDB)
+  // ============================================================
+  const LOCK_API_URL = "https://webapi-jade.vercel.app/web_lock/status"; // <-- CHANGE
+
+  async function checkWebLock() {
+    try {
+      const resp = await fetch(LOCK_API_URL);
+      const data = await resp.json();
+      if (data.locked) {
+        document.getElementById('mainApp').style.display = 'none';
+        document.getElementById('maintenancePage').style.display = 'flex';
+      } else {
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('maintenancePage').style.display = 'none';
+      }
+    } catch (e) {
+      console.warn('Lock check failed, assuming unlocked');
+      document.getElementById('mainApp').style.display = 'block';
+      document.getElementById('maintenancePage').style.display = 'none';
+    }
+  }
+
+  // ============================================================
+  //  SUPPORT POPUP
+  // ============================================================
+  function openSupport() {
+    document.getElementById('supportOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSupport() {
+    document.getElementById('supportOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSupport();
+  });
+
+  // ============================================================
+  //  3-THEME TOGGLE
+  // ============================================================
+  const themes = ['dark', 'light', 'neon'];
+  const themeLabels = ['Dark', 'Light', 'Neon'];
+  let currentThemeIndex = 0;
+
+  document.getElementById('themeToggle').addEventListener('click', function() {
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    const theme = themes[currentThemeIndex];
+    document.body.className = theme;
+    document.getElementById('themeLabel').textContent = themeLabels[currentThemeIndex];
+    const icon = this.querySelector('i');
+    if (theme === 'dark') icon.setAttribute('data-feather', 'moon');
+    else if (theme === 'light') icon.setAttribute('data-feather', 'sun');
+    else icon.setAttribute('data-feather', 'zap');
+    feather.replace();
+  });
+
+  // ============================================================
+  //  API ENDPOINTS
+  // ============================================================
+  const API_ENDPOINTS = [
+    { label: 'Konekta', numbers: 'https://hadi-sms.vercel.app/numbers', sms: 'https://hadi-sms.vercel.app/sms' },
+    { label: 'NP Node', numbers: 'https://sms-api2-virid.vercel.app/numbers', sms: 'https://sms-api2-virid.vercel.app/sms' },
+    { label: 'HADI Feed', numbers: 'https://kk-sms.vercel.app/numbers', sms: 'https://kk-sms.vercel.app/sms' }
+  ];
+
+  // ============================================================
+  //  190+ COUNTRY FLAGS
+  // ============================================================
+  const COUNTRY_FLAGS = {
+    'afghanistan':'🇦🇫','albania':'🇦🇱','algeria':'🇩🇿','andorra':'🇦🇩','angola':'🇦🇴','antigua and barbuda':'🇦🇬',
+    'argentina':'🇦🇷','armenia':'🇦🇲','australia':'🇦🇺','austria':'🇦🇹','azerbaijan':'🇦🇿','bahamas':'🇧🇸',
+    'bahrain':'🇧🇭','bangladesh':'🇧🇩','barbados':'🇧🇧','belarus':'🇧🇾','belgium':'🇧🇪','belize':'🇧🇿',
+    'benin':'🇧🇯','bhutan':'🇧🇹','bolivia':'🇧🇴','bosnia and herzegovina':'🇧🇦','botswana':'🇧🇼','brazil':'🇧🇷',
+    'brunei':'🇧🇳','bulgaria':'🇧🇬','burkina faso':'🇧🇫','burundi':'🇧🇮','cape verde':'🇨🇻','cambodia':'🇰🇭',
+    'cameroon':'🇨🇲','canada':'🇨🇦','central african republic':'🇨🇫','chad':'🇹🇩','chile':'🇨🇱','china':'🇨🇳',
+    'colombia':'🇨🇴','comoros':'🇰🇲','congo':'🇨🇬','costa rica':'🇨🇷','croatia':'🇭🇷','cuba':'🇨🇺',
+    'cyprus':'🇨🇾','czech republic':'🇨🇿','denmark':'🇩🇰','djibouti':'🇩🇯','dominica':'🇩🇲','dominican republic':'🇩🇴',
+    'east timor':'🇹🇱','ecuador':'🇪🇨','egypt':'🇪🇬','el salvador':'🇸🇻','equatorial guinea':'🇬🇶','eritrea':'🇪🇷',
+    'estonia':'🇪🇪','eswatini':'🇸🇿','ethiopia':'🇪🇹','fiji':'🇫🇯','finland':'🇫🇮','france':'🇫🇷',
+    'gabon':'🇬🇦','gambia':'🇬🇲','georgia':'🇬🇪','germany':'🇩🇪','ghana':'🇬🇭','greece':'🇬🇷',
+    'grenada':'🇬🇩','guatemala':'🇬🇹','guinea':'🇬🇳','guinea-bissau':'🇬🇼','guyana':'🇬🇾','haiti':'🇭🇹',
+    'honduras':'🇭🇳','hungary':'🇭🇺','iceland':'🇮🇸','india':'🇮🇳','indonesia':'🇮🇩','iran':'🇮🇷',
+    'iraq':'🇮🇶','ireland':'🇮🇪','israel':'🇮🇱','italy':'🇮🇹','ivory coast':'🇨🇮','jamaica':'🇯🇲',
+    'japan':'🇯🇵','jordan':'🇯🇴','kazakhstan':'🇰🇿','kenya':'🇰🇪','kiribati':'🇰🇮','north korea':'🇰🇵',
+    'south korea':'🇰🇷','kosovo':'🇽🇰','kuwait':'🇰🇼','kyrgyzstan':'🇰🇬','laos':'🇱🇦','latvia':'🇱🇻',
+    'lebanon':'🇱🇧','lesotho':'🇱🇸','liberia':'🇱🇷','libya':'🇱🇾','liechtenstein':'🇱🇮','lithuania':'🇱🇹',
+    'luxembourg':'🇱🇺','madagascar':'🇲🇬','malawi':'🇲🇼','malaysia':'🇲🇾','maldives':'🇲🇻','mali':'🇲🇱',
+    'malta':'🇲🇹','marshall islands':'🇲🇭','mauritania':'🇲🇷','mauritius':'🇲🇺','mexico':'🇲🇽','micronesia':'🇫🇲',
+    'moldova':'🇲🇩','monaco':'🇲🇨','mongolia':'🇲🇳','montenegro':'🇲🇪','morocco':'🇲🇦','mozambique':'🇲🇿',
+    'myanmar':'🇲🇲','namibia':'🇳🇦','nauru':'🇳🇷','nepal':'🇳🇵','netherlands':'🇳🇱','new zealand':'🇳🇿',
+    'nicaragua':'🇳🇮','niger':'🇳🇪','nigeria':'🇳🇬','north macedonia':'🇲🇰','norway':'🇳🇴','oman':'🇴🇲',
+    'pakistan':'🇵🇰','palau':'🇵🇼','palestine':'🇵🇸','panama':'🇵🇦','papua new guinea':'🇵🇬','paraguay':'🇵🇾',
+    'peru':'🇵🇪','philippines':'🇵🇭','poland':'🇵🇱','portugal':'🇵🇹','qatar':'🇶🇦','romania':'🇷🇴',
+    'russia':'🇷🇺','rwanda':'🇷🇼','saint kitts and nevis':'🇰🇳','saint lucia':'🇱🇨','saint vincent':'🇻🇨',
+    'samoa':'🇼🇸','san marino':'🇸🇲','sao tome and principe':'🇸🇹','saudi arabia':'🇸🇦','senegal':'🇸🇳',
+    'serbia':'🇷🇸','seychelles':'🇸🇨','sierra leone':'🇸🇱','singapore':'🇸🇬','slovakia':'🇸🇰','slovenia':'🇸🇮',
+    'solomon islands':'🇸🇧','somalia':'🇸🇴','south africa':'🇿🇦','south sudan':'🇸🇸','spain':'🇪🇸',
+    'sri lanka':'🇱🇰','sudan':'🇸🇩','suriname':'🇸🇷','sweden':'🇸🇪','switzerland':'🇨🇭','syria':'🇸🇾',
+    'taiwan':'🇹🇼','tajikistan':'🇹🇯','tanzania':'🇹🇿','thailand':'🇹🇭','togo':'🇹🇬','tonga':'🇹🇴',
+    'trinidad and tobago':'🇹🇹','tunisia':'🇹🇳','turkey':'🇹🇷','turkmenistan':'🇹🇲','tuvalu':'🇹🇻',
+    'uganda':'🇺🇬','ukraine':'🇺🇦','united arab emirates':'🇦🇪','united kingdom':'🇬🇧','united states':'🇺🇸',
+    'uruguay':'🇺🇾','uzbekistan':'🇺🇿','vanuatu':'🇻🇺','vatican city':'🇻🇦','venezuela':'🇻🇪','vietnam':'🇻🇳',
+    'yemen':'🇾🇪','zambia':'🇿🇲','zimbabwe':'🇿🇼'
+  };
+
+  // ============================================================
+  //  SERVICE DETECTION
+  // ============================================================
+  function detectService(msg) {
+    if (!msg) return 'Verification';
+    const msgLower = msg.toLowerCase();
+    const services = {
+      'telegram': ['telegram', 'tg', '@', 't.me'],
+      'whatsapp': ['whatsapp', 'wa.me', 'your whatsapp code', 'whatsapp verification', 'whatsapp code'],
+      'tiktok': ['tiktok', 'tt'],
+      'instagram': ['instagram', 'insta', 'ig'],
+      'facebook': ['facebook', 'fb', 'meta'],
+      'google': ['google', 'gmail', 'youtube', 'g-'],
+      'apple': ['apple', 'icloud', 'ios'],
+      'microsoft': ['microsoft', 'outlook', 'hotmail'],
+      'amazon': ['amazon', 'aws'],
+      'paypal': ['paypal', 'pp'],
+      'netflix': ['netflix', 'nf'],
+      'spotify': ['spotify', 'sp'],
+      'discord': ['discord', 'dc'],
+      'twitter': ['twitter', 'x', 't.co'],
+      'github': ['github', 'gh'],
+      'linkedin': ['linkedin', 'li'],
+      'snapchat': ['snapchat', 'snap'],
+      'reddit': ['reddit', 'rdt'],
+      'uber': ['uber'],
+      'bank': ['bank', 'upi', 'paytm', 'gpay', 'phonepe']
+    };
+    for (const [service, words] of Object.entries(services)) {
+      for (const word of words) {
+        if (msgLower.includes(word)) return service.charAt(0).toUpperCase() + service.slice(1);
+      }
+    }
+    return 'Verification';
+  }
+
+  // ============================================================
+  //  SUPER STRONG OTP EXTRACTION
+  // ============================================================
+  function extractOTP(msg) {
+    if (!msg) return null;
+    let match = msg.match(/[Ww]hats[Aa]pp\s*[Cc]ode\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Yy]our\s*[Ww]hats[Aa]pp\s*[Cc]ode\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Ww]hats[Aa]pp\s*[Vv]erification\s*[Cc]ode\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/\b(\d{3,8})\b/);
+    if (match) return match[1];
+    match = msg.match(/[Oo][Tt][Pp]\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Cc]ode\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Vv]erification\s*[Cc]ode\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Yy]our\s*[Oo][Tt][Pp]\s*[Ii][Ss]\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/[Ii][Ss]\s*[:：\-]?\s*(\d{3,8})/);
+    if (match) return match[1];
+    match = msg.match(/(\d{3}\s?\d{3}\s?\d{2})/);
+    if (match) return match[1].replace(/\s/g, '');
+    match = msg.match(/[\[\(](\d{3,8})[\]\)]/);
+    if (match) return match[1];
+    match = msg.match(/\b(\d-\d-\d-\d-\d-\d)\b/);
+    if (match) return match[1].replace(/-/g, '');
+    match = msg.match(/\b(\d{6})\b/);
+    if (match) return match[1];
+    match = msg.match(/\b(\d{4})\b/);
+    if (match) return match[1];
+    match = msg.match(/\b(\d{3,8})\s*[:：]/);
+    if (match) return match[1];
+    match = msg.match(/(\d{3,8})\s*$/);
+    if (match) return match[1];
+    return null;
+  }
+
+  // ============================================================
+  //  STATE
+  // ============================================================
+  let pendingOtps = [];
+  let otpIdCounter = 0;
+  let allNumbers = [];
+  let currentNumberObj = null;
+  let currentUserOtp = null;
+  let selectedService = 'all';
+  const serviceList = ['telegram', 'whatsapp', 'tiktok', 'instagram', 'facebook', 'google', 'apple', 'microsoft', 'amazon', 'paypal', 'netflix', 'spotify', 'discord', 'twitter', 'github', 'linkedin', 'snapchat', 'reddit', 'uber', 'bank'];
+
+  // ============================================================
+  //  HELPERS
+  // ============================================================
+  function maskNumberSafe(raw) {
+    if (!raw) return 'N/A';
+    const clean = raw.toString().replace(/\D/g, '');
+    if (clean.length <= 4) return clean;
+    return clean.slice(0, 2) + 'xxxx' + clean.slice(-2);
+  }
+
+  function getFlag(country) {
+    if (!country) return '🌍';
+    return COUNTRY_FLAGS[country.toString().trim().toLowerCase()] || '🌍';
+  }
+
+  function getCountryName(raw) {
+    if (!raw) return 'Unknown';
+    const c = raw.trim();
+    if (c.toLowerCase() === 'us' || c.toLowerCase() === 'usa') return 'United States';
+    if (c.toLowerCase() === 'uk') return 'United Kingdom';
+    if (c.toLowerCase() === 'uae') return 'United Arab Emirates';
+    return c.charAt(0).toUpperCase() + c.slice(1).toLowerCase();
+  }
+
+  // ============================================================
+  //  UPDATE ACTIVE OTP BOX
+  // ============================================================
+  function updateActiveOtpBox() {
+    const box = document.getElementById('activeOtpDisplay');
+    if (currentUserOtp) {
+      const masked = maskNumberSafe(currentUserOtp.number);
+      const flag = getFlag(currentUserOtp.country || '');
+      box.innerHTML = `
+        <span>${flag} ${masked}</span>
+        <span class="otp-code">🔑 ${currentUserOtp.otp}</span>
+        <span style="font-size:0.6rem; color:var(--text2);">${new Date(currentUserOtp.timestamp).toLocaleTimeString()}</span>
+      `;
+      setTimeout(() => {
+        if (currentUserOtp && !currentUserOtp.loggedIn) {
+          currentUserOtp = null;
+          updateActiveOtpBox();
+          renderPendingOtps();
+        }
+      }, 30000);
+    } else {
+      box.innerHTML = `<span>No OTP sent yet</span>`;
+    }
+  }
+
+  // ============================================================
+  //  FETCH NUMBERS
+  // ============================================================
+  async function fetchAllNumbers() {
+    try {
+      const results = await Promise.all(
+        API_ENDPOINTS.map(async api => {
+          try {
+            const resp = await fetch(api.numbers);
+            const data = await resp.json();
+            const list = Array.isArray(data) ? data : (data && data.numbers ? data.numbers : []);
+            return list.map(n => ({ ...n, source: api.label }));
+          } catch { return []; }
+        })
+      );
+      allNumbers = results.flat();
+    } catch { allNumbers = []; }
+
+    document.getElementById('totalNumbers').textContent = allNumbers.length;
+    updateCountryDropdown();
+    updateServiceButtons();
+    generateNumber();
+  }
+
+  function updateCountryDropdown() {
+    const select = document.getElementById('countrySelect');
+    const countries = [...new Set(allNumbers.map(n => getCountryName(n.country || n.country_name || 'Unknown')))];
+    select.innerHTML = '<option value="auto">✨ Auto Detect</option>';
+    countries.forEach(c => {
+      select.innerHTML += `<option value="${c}">${getFlag(c)} ${c}</option>`;
+    });
+    document.getElementById('totalCountries').textContent = countries.length;
+  }
+
+  function updateServiceButtons() {
+    const container = document.getElementById('serviceFilter');
+    const available = new Set();
+    allNumbers.forEach(n => {
+      const svc = detectService(n.service || n.number || n.raw || '').toLowerCase();
+      if (svc !== 'verification') available.add(svc);
+    });
+    
+    let html = `<button class="active" data-service="all">All</button>`;
+    serviceList.forEach(svc => {
+      if (available.has(svc)) {
+        html += `<button data-service="${svc}">${svc.charAt(0).toUpperCase() + svc.slice(1)}</button>`;
+      }
+    });
+    container.innerHTML = html;
+    
+    container.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', function() {
+        container.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        selectedService = this.dataset.service;
+        document.getElementById('filterStatus').textContent = `Showing: ${selectedService === 'all' ? 'All' : selectedService.charAt(0).toUpperCase() + selectedService.slice(1)}`;
+        generateNumber();
+      });
+    });
+  }
+
+  function generateNumber() {
+    const country = document.getElementById('countrySelect').value.trim();
+    const server = document.getElementById('serverSelect').value.trim();
+    const display = document.getElementById('randomNumberDisplay');
+    const flag = document.getElementById('numberFlag');
+    const sub = document.getElementById('numberSubText');
+    const copy = document.getElementById('copyNumberBtn');
+
+    if (allNumbers.length === 0) {
+      flag.textContent = '🚫';
+      display.textContent = 'Unavailable';
+      sub.textContent = 'No numbers fetched.';
+      copy.classList.add('hidden');
+      return;
+    }
+
+    let filtered = allNumbers;
+    if (server !== 'all') filtered = filtered.filter(n => n.source === server);
+    
+    let selectedCountry = country;
+    if (selectedCountry === 'auto') {
+      const first = filtered.find(n => n.country || n.country_name || n.number || n.raw);
+      if (first) {
+        selectedCountry = getCountryName(first.country || first.country_name);
+        document.getElementById('countrySelect').value = selectedCountry;
+      }
+    } else {
+      filtered = filtered.filter(n => getCountryName(n.country || n.country_name) === selectedCountry);
+    }
+
+    if (selectedService !== 'all') {
+      filtered = filtered.filter(n => detectService(n.service || n.number || n.raw || '').toLowerCase() === selectedService);
+    }
+
+    if (filtered.length === 0) {
+      flag.textContent = '🚫';
+      display.textContent = 'Unavailable';
+      sub.textContent = `No numbers for ${selectedCountry} · ${selectedService}`;
+      copy.classList.add('hidden');
+      return;
+    }
+
+    const random = filtered[Math.floor(Math.random() * filtered.length)];
+    currentNumberObj = random;
+    const num = random.raw || random.e164 || random.number || random.phone || 'N/A';
+    const cName = getCountryName(random.country || random.country_name || selectedCountry);
+    flag.textContent = getFlag(cName);
+    display.textContent = num;
+    sub.textContent = `Country: ${cName} · Server: ${random.source}`;
+    copy.classList.remove('hidden');
+  }
+
+  // ============================================================
+  //  OTP TABLE RENDER
+  // ============================================================
+  function renderPendingOtps() {
+    const table = document.getElementById('otpTableBody');
+    const status = document.getElementById('smsStatus');
+    const count = document.getElementById('pendingOtps');
+
+    const now = Date.now();
+    pendingOtps = pendingOtps.filter(o => o.loggedIn === false && (now - o.timestamp) < 30000);
+
+    count.textContent = pendingOtps.length;
+
+    if (pendingOtps.length === 0) {
+      table.innerHTML = '';
+      status.textContent = 'No pending OTPs. Waiting...';
+      status.classList.remove('hidden');
+      return;
+    }
+
+    status.classList.add('hidden');
+    let html = '';
+    pendingOtps.forEach((otp, index) => {
+      const masked = maskNumberSafe(otp.number);
+      const flag = getFlag(otp.country || '');
+      const time = new Date(otp.timestamp).toLocaleTimeString();
+      const service = detectService(otp.message || '');
+
+      html += `
+        <tr>
+          <td class="text-xs text-gray-400">${time}</td>
+          <td><span class="number-badge">${flag} ${masked}</span></td>
+          <td><span class="text-xs font-semibold text-blue-400">${service}</span></td>
+          <td>
+            <div class="text-sm mb-1">${otp.message || ''}</div>
+            <div class="text-xs font-bold text-green-400">🔑 OTP: <span class="otp-code-highlight">${otp.otp}</span></div>
+          </td>
+          <td>
+            <button class="login-btn" onclick="markLoggedIn(${index})"><i data-feather="check-circle" class="w-3.5 h-3.5 inline mr-1"></i> Login</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    table.innerHTML = html;
+    feather.replace();
+  }
+
+  function markLoggedIn(index) {
+    if (index >= 0 && index < pendingOtps.length) {
+      pendingOtps[index].loggedIn = true;
+      if (currentUserOtp && pendingOtps[index].id === currentUserOtp.id) {
+        currentUserOtp = null;
+        updateActiveOtpBox();
+      }
+      renderPendingOtps();
+    }
+  }
+
+  // ============================================================
+  //  FETCH SMS
+  // ============================================================
+  async function fetchAllSms() {
+    const server = document.getElementById('serverSelect').value.trim();
+    let endpoints = API_ENDPOINTS;
+    if (server !== 'all' && server !== 'Admin Stock') {
+      endpoints = API_ENDPOINTS.filter(api => api.label === server);
+    }
+
+    let all = [];
+    try {
+      const results = await Promise.all(
+        endpoints.map(async api => {
+          try {
+            const resp = await fetch(api.sms, { timeout: 5000 });
+            if (!resp.ok) return [];
+            const data = await resp.json();
+            return Array.isArray(data) ? data : (data.otps || data.messages || []);
+          } catch (e) {
+            console.warn(`API ${api.label} failed:`, e);
+            return [];
+          }
+        })
+      );
+      all = results.flat();
+      console.log(`✅ Fetched ${all.length} messages from ${endpoints.length} APIs`);
+    } catch (e) {
+      console.error('SMS fetch error:', e);
+      all = [];
+    }
+
+    all.forEach(row => {
+      const msg = row.message || row.msg || row.sms || '';
+      const otp = extractOTP(msg);
+      if (otp) {
+        const number = row.number || row.phone || row.target || 'N/A';
+        const country = row.country || row.country_name || '';
+        if (!pendingOtps.some(o => o.number === number && o.otp === otp)) {
+          const newOtp = {
+            id: otpIdCounter++,
+            number, otp,
+            message: msg,
+            service: detectService(msg),
+            country,
+            timestamp: Date.now(),
+            loggedIn: false
+          };
+          pendingOtps.push(newOtp);
+          if (!newOtp.loggedIn) {
+            currentUserOtp = newOtp;
+            updateActiveOtpBox();
+          }
+          console.log(`✅ OTP extracted: ${otp} for ${number}`);
+        }
+      }
+    });
+
+    renderPendingOtps();
+  }
+
+  // ============================================================
+  //  AUTO REFRESH
+  // ============================================================
+  setInterval(fetchAllSms, 5000);
+
+  // ============================================================
+  //  EVENT BINDINGS
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', async () => {
+    await checkWebLock();
+    feather.replace();
+    fetchAllNumbers();
+    setTimeout(fetchAllSms, 1000);
+
+    document.getElementById('generateBtn').addEventListener('click', generateNumber);
+    document.getElementById('countrySelect').addEventListener('change', generateNumber);
+    document.getElementById('serverSelect').addEventListener('change', () => {
+      generateNumber();
+      fetchAllSms();
+    });
+    document.getElementById('refreshSmsBtn').addEventListener('click', fetchAllSms);
+    document.getElementById('copyNumberBtn').addEventListener('click', () => {
+      if (currentNumberObj) {
+        const num = currentNumberObj.raw || currentNumberObj.e164 || currentNumberObj.number || currentNumberObj.phone || '';
+        if (num) navigator.clipboard.writeText(num);
+      }
+    });
+  });
+</script>
+</body>
+</html>
